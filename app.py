@@ -25,6 +25,24 @@ def create_user():
     else:
         return jsonify({'error': 'Incomplete data provided'}), 400
 
+# login
+@app.route('/login', methods=['POST'])
+def login_user():
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify({'error': 'Incomplete data provided'}), 400
+
+    user = mongo.db.users.find_one({'username': username, 'password': password})
+
+    if user:
+        user_id = str(user['_id'])
+        return jsonify({'message': 'User Exists', 'user_id': user_id}), 201
+    else:
+        return jsonify({'message': 'User not found'}), 404
+
 # Update User
 # @app.route('/user/<string:user_id>', methods=['PUT'])
 def update_user(data):
